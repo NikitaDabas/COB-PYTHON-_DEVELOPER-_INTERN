@@ -1,0 +1,89 @@
+#build a tool to track and manage personal expenses and generate monthly reports.
+
+#import libraries
+import pandas as pd
+from datetime import date
+from tabulate import tabulate
+
+#empty lists
+GOODS_OR_SERVICES=[]
+PRICE=[]
+DATE=[]
+EXP_TYPE=[]
+
+
+def add(goods_or_service,price,Date,exp_type):
+    GOODS_OR_SERVICES.append(goods_or_service)
+    PRICE.append(price)
+    DATE.append(Date)
+    EXP_TYPE.append(exp_type)
+    
+    
+while True:
+    print('WELCOME TO PERSONAL EXPENSES MANAGER : ')
+    print('ENTER              TO')
+    print('1                  ADD TRANSPORTATION EXPENSE')
+    print('2                  ADD FOOD EXPENSE')
+    print('3                  ADD HOUSEHOLD EXPENSE')
+    print('4                  SHOW THE EXPENSE REPORT')
+    print('5                  show total expenditure')
+    print('6                  EXIT')
+    print()
+    ch=int(input('Enter your choice : '))
+    if ch==1:
+        print('ADDING TRANSPORTATION EXPENSE')
+        exp_type='TRANSPORTATION'
+    elif ch==2:
+        print('ADDING FOOD EXPENSE ')
+        exp_type='FOOD'
+    elif ch==3:
+        print('ADDING HOUSEHOLD EXPENSE ')
+        exp_type='HOUSEHOLD'
+    elif ch==4:
+        expense_report=pd.DataFrame()
+        expense_report['GOODS_OR_SERVICE']=GOODS_OR_SERVICES
+        expense_report['PRICE']=PRICE
+        expense_report['DATES']=DATE
+        expense_report['EXPENSE_TYPE']=EXP_TYPE
+        expense_report.index+=1
+        expense_report.to_csv('exp.csv')
+        print(tabulate(expense_report,headers='keys',tablefmt='psql'))
+    elif ch==5:
+        head=['FOR','EXPENDITURE']
+        t_sum=0
+        f_sum=0
+        h_sum=0
+        for i in range(len(EXP_TYPE)):
+            if EXP_TYPE[i]=='TRANSPORTATION':
+
+                t_sum+=PRICE[i]
+            elif EXP_TYPE[i]=='FOOD':
+                f_sum+=PRICE[i]
+            else:
+                h_sum+=PRICE[i]
+        total=sum(PRICE)
+        s_table=[['TRANSPORTATION',t_sum],['FOOD',f_sum],['HOUSEHOLD',h_sum],['OVERALL',total]]
+        print(tabulate(s_table,headers=head,tablefmt='grid'))
+            
+    elif ch==6:
+        print('--------------------------------------QUITTING-------------------------------------')
+        break
+    else:
+        print('INVALID CHOICE!!! PLEASE ENTER VALID CHOICE!!!')
+        
+    
+    if ch in [1,2,3]:
+        good_or_service=input(f'Enter the name of good or service for the expense type {exp_type} :\n ')
+        price=float(input(f'Enter the price of {good_or_service} :\n'))
+        Date=date.today()
+        add(good_or_service,price,Date,exp_type)
+        
+    print()
+        
+    
+    
+    
+    
+    
+
+
